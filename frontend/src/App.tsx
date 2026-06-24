@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 import { fetchHealth, fetchUsers } from "./api";
+import { CreateVideo } from "./components/CreateVideo";
 import { UserSwitcher } from "./components/UserSwitcher";
 import type { User } from "./types";
 
@@ -11,6 +12,7 @@ export function App() {
   const [users, setUsers] = useState<User[]>([]);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [usersError, setUsersError] = useState<string | null>(null);
+  const [, setFeedRefreshToken] = useState(0);
 
   useEffect(() => {
     fetchHealth().then(setApiOnline).catch(() => setApiOnline(false));
@@ -51,15 +53,10 @@ export function App() {
             onCurrentUserChange={chooseUser}
           />
           {usersError && <p className="error-message" role="alert">{usersError}</p>}
-          <div className="creation-placeholder">
-            <p className="step-label">02 / CREATE</p>
-            <h2>Make a reel</h2>
-            <p>
-              {currentUser
-                ? `Ready when you are, @${currentUser.username}.`
-                : "Select or create a user before posting."}
-            </p>
-          </div>
+          <CreateVideo
+            currentUser={currentUser}
+            onVideoPosted={() => setFeedRefreshToken((value) => value + 1)}
+          />
         </aside>
         <section className="panel feed-placeholder">
           <h2>Your feed</h2>
