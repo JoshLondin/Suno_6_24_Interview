@@ -1,7 +1,10 @@
-from datetime import datetime
+from __future__ import annotations
 
-from sqlalchemy import DateTime, String, func
-from sqlalchemy.orm import Mapped, mapped_column
+from datetime import datetime
+from typing import Optional
+
+from sqlalchemy import DateTime, Float, ForeignKey, Index, String, func
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .db import Base
 
@@ -15,3 +18,24 @@ class User(Base):
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
 
+    videos: Mapped[list["Video"]] = relationship(back_populates="user")
+
+
+class Video(Base):
+    __tablename__ = "videos"
+    __table_args__ = (
+        Index("idx_videos_created_at_id", "created_at", "id"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    filename: Mapped[str] = mapped_column(String, unique=True)
+    original_filename: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    content_type: Mapped[str] = mapped_column(String)
+    file_size_bytes: Mapped[int]
+    duration_seconds: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False, index=True
+    )
+
+    user: Mapped[User] = relationship(back_populates="videos")

@@ -10,6 +10,7 @@ from .db import Base, engine
 from . import models  # noqa: F401 - register SQLAlchemy models
 from .storage import ensure_video_dir
 from .users import router as users_router
+from .videos import router as videos_router
 
 
 @asynccontextmanager
@@ -33,6 +34,7 @@ app.add_middleware(
 
 app.mount("/media", StaticFiles(directory=str(MEDIA_DIR)), name="media")
 app.include_router(users_router)
+app.include_router(videos_router)
 
 
 @app.get("/api/health")
