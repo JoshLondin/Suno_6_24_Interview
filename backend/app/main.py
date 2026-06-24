@@ -7,7 +7,9 @@ from fastapi.staticfiles import StaticFiles
 
 from .config import CORS_ORIGINS, MEDIA_DIR
 from .db import Base, engine
+from . import models  # noqa: F401 - register SQLAlchemy models
 from .storage import ensure_video_dir
+from .users import router as users_router
 
 
 @asynccontextmanager
@@ -30,9 +32,9 @@ app.add_middleware(
 )
 
 app.mount("/media", StaticFiles(directory=str(MEDIA_DIR)), name="media")
+app.include_router(users_router)
 
 
 @app.get("/api/health")
 def health() -> dict[str, bool]:
     return {"ok": True}
-
