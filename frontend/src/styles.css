@@ -9,6 +9,7 @@
 
 body { margin: 0; min-width: 320px; min-height: 100vh; }
 button, input, select { font: inherit; }
+button, select, input { border: 0; }
 
 .app-shell { min-height: 100vh; padding: 24px; }
 .top-bar { display: flex; justify-content: space-between; align-items: center; margin: 0 auto 24px; max-width: 1320px; }
@@ -21,6 +22,22 @@ button, input, select { font: inherit; }
 .panel h2 { margin-top: 0; }
 .panel p { color: #a1a1aa; line-height: 1.6; }
 .feed-placeholder { min-height: 70vh; display: grid; place-content: center; text-align: center; }
+.section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.step-label { margin: 0 0 5px !important; color: #71717a !important; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.14em; }
+.avatar { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: #f43f5e; color: white; font-weight: 800; text-transform: uppercase; }
+.account-section label { display: block; margin: 18px 0 7px; color: #d4d4d8; font-size: 0.78rem; font-weight: 650; }
+.account-section select, .account-section input { width: 100%; min-height: 44px; border-radius: 10px; background: #222225; color: #fafafa; outline: 1px solid #343439; }
+.account-section select { padding: 0 12px; }
+.account-section input { padding: 0 8px 0 24px; }
+.account-section select:focus, .account-section input:focus { outline: 2px solid #fb7185; }
+.divider { display: flex; align-items: center; gap: 10px; margin: 20px 0 0; color: #71717a; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.divider::before, .divider::after { content: ""; height: 1px; flex: 1; background: #2f2f33; }
+.input-row { position: relative; display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+.input-row > span { position: absolute; z-index: 1; left: 9px; top: 11px; color: #71717a; }
+button { border-radius: 10px; padding: 0 15px; background: #f43f5e; color: white; font-weight: 750; cursor: pointer; }
+button:disabled { cursor: not-allowed; opacity: 0.55; }
+.error-message { margin: 10px 0 0 !important; color: #fda4af !important; font-size: 0.82rem; }
+.creation-placeholder { border-top: 1px solid #2b2b2f; margin-top: 24px; padding-top: 24px; }
 
 @media (max-width: 800px) {
   .app-shell { padding: 12px; }
