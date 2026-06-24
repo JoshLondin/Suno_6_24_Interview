@@ -21,7 +21,7 @@ button, select, input { border: 0; }
 .panel { border: 1px solid #27272a; border-radius: 20px; background: #141416; padding: 20px; }
 .panel h2 { margin-top: 0; }
 .panel p { color: #a1a1aa; line-height: 1.6; }
-.feed-placeholder { min-height: 70vh; display: grid; place-content: center; text-align: center; }
+.feed-panel { padding: 12px; }
 .section-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .step-label { margin: 0 0 5px !important; color: #71717a !important; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.14em; }
 .avatar { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: #f43f5e; color: white; font-weight: 800; text-transform: uppercase; }
@@ -55,8 +55,31 @@ button:disabled { cursor: not-allowed; opacity: 0.55; }
 .secondary-button { background: #29292d; color: #e4e4e7; }
 .uploading-message { color: #fda4af !important; font-weight: 650; }
 .visually-hidden { position: absolute !important; width: 1px !important; height: 1px !important; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+.feed-section { min-width: 0; }
+.feed-heading { display: flex; justify-content: space-between; align-items: end; padding: 7px 8px 12px; }
+.feed-heading h2 { margin: 0; }
+.nav-hint { display: flex; gap: 8px; color: #71717a; font-size: 0.7rem; }
+.nav-hint span { border: 1px solid #303035; border-radius: 999px; padding: 5px 8px; }
+.reels-viewport { position: relative; height: 76vh; min-height: 520px; overflow: hidden; border-radius: 14px; background: #050506; overscroll-behavior: contain; touch-action: none; }
+.reels-track { height: 100%; transition: transform 220ms cubic-bezier(.22,.8,.3,1); will-change: transform; }
+.reel-card { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; height: 76vh; min-height: 520px; background: #050506; }
+.reel-card video { width: 100%; height: 100%; object-fit: contain; }
+.reel-gradient { position: absolute; inset: auto 0 0; height: 45%; pointer-events: none; background: linear-gradient(transparent, #000b); }
+.reel-overlay { position: absolute; left: 22px; right: 70px; bottom: 22px; color: white; text-shadow: 0 2px 12px #000; }
+.reel-overlay h3 { margin: 4px 0; font-size: 1.4rem; }
+.reel-overlay time { color: #d4d4d8; font-size: 0.78rem; }
+.reel-count { margin: 0 !important; color: #fda4af !important; font-size: 0.65rem; font-weight: 800; letter-spacing: .12em; }
+.reel-nav-buttons { position: absolute; z-index: 3; right: 14px; bottom: 18px; display: flex; flex-direction: column; gap: 7px; }
+.reel-nav-buttons button { display: grid; place-items: center; width: 40px; height: 40px; padding: 0; border: 1px solid #ffffff2b; border-radius: 50%; background: #18181bd9; backdrop-filter: blur(8px); }
+.feed-toast { position: absolute; z-index: 4; top: 14px; left: 50%; transform: translateX(-50%); border-radius: 999px; padding: 8px 12px; background: #18181be8; color: #e4e4e7; font-size: .75rem; white-space: nowrap; }
+.feed-state { min-height: 76vh; display: grid; place-content: center; text-align: center; color: #a1a1aa; }
+.empty-feed span { color: #fb7185; font-size: 2.5rem; }
+.empty-feed h2 { margin: 12px 0 0; color: #f4f4f5; }
+.empty-feed p { margin: 4px 0; }
 
 @media (max-width: 800px) {
   .app-shell { padding: 12px; }
   .main-grid { grid-template-columns: 1fr; }
+  .reels-viewport, .reel-card { height: 72vh; min-height: 460px; }
+  .nav-hint { display: none; }
 }

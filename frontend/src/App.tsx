@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { fetchHealth, fetchUsers } from "./api";
 import { CreateVideo } from "./components/CreateVideo";
+import { ReelsFeed } from "./components/ReelsFeed";
 import { UserSwitcher } from "./components/UserSwitcher";
 import type { User } from "./types";
 
@@ -12,7 +13,7 @@ export function App() {
   const [users, setUsers] = useState<User[]>([]);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [usersError, setUsersError] = useState<string | null>(null);
-  const [, setFeedRefreshToken] = useState(0);
+  const [feedRefreshToken, setFeedRefreshToken] = useState(0);
 
   useEffect(() => {
     fetchHealth().then(setApiOnline).catch(() => setApiOnline(false));
@@ -58,9 +59,8 @@ export function App() {
             onVideoPosted={() => setFeedRefreshToken((value) => value + 1)}
           />
         </aside>
-        <section className="panel feed-placeholder">
-          <h2>Your feed</h2>
-          <p>Fresh reels will appear here.</p>
+        <section className="panel feed-panel">
+          <ReelsFeed refreshToken={feedRefreshToken} />
         </section>
       </main>
     </div>
