@@ -7,18 +7,21 @@ import {
   type WheelEvent,
 } from "react";
 
-import { fetchFeed } from "../api";
-import type { Video } from "../types";
+import { fetchFeed, likeVideo, unlikeVideo } from "../api";
+import type { User, Video } from "../types";
 import { ReelCard } from "./ReelCard";
 
-type ReelsFeedProps = { refreshToken: number };
+type ReelsFeedProps = {
+  currentUser: User | null;
+  refreshToken: number;
+};
 
 const PAGE_SIZE = 20;
 const SWIPE_THRESHOLD_PX = 50;
 const WHEEL_COOLDOWN_MS = 400;
 const TRANSITION_MS = 240;
 
-export function ReelsFeed({ refreshToken }: ReelsFeedProps) {
+export function ReelsFeed({ currentUser, refreshToken }: ReelsFeedProps) {
   const [videos, setVideos] = useState<Video[]>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [offset, setOffset] = useState(0);
@@ -47,7 +50,7 @@ export function ReelsFeed({ refreshToken }: ReelsFeedProps) {
     let active = true;
     setLoading(true);
     setError(null);
-    fetchFeed(PAGE_SIZE, 0)
+    fetchFeed(PAGE_SIZE, 0, currentUser?.id)
       .then((response) => {
         if (!active) return;
         setVideos(response.items);
@@ -62,7 +65,7 @@ export function ReelsFeed({ refreshToken }: ReelsFeedProps) {
         if (active) setLoading(false);
       });
     return () => { active = false; };
-  }, [refreshToken]);
+  }, [currentUser?.id, refreshToken]);
 
   useEffect(() => {
     return () => {
@@ -101,7 +104,7 @@ export function ReelsFeed({ refreshToken }: ReelsFeedProps) {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetchFeed(PAGE_SIZE, offset);
+      const response = await fetchFeed(PAGE_SIZE, offset, currentUser?.id);
       setVideos((current) => [...current, ...response.items]);
       setOffset(response.next_offset);
       setHasMore(response.has_more);
@@ -117,7 +120,46 @@ export function ReelsFeed({ refreshToken }: ReelsFeedProps) {
     } finally {
       setLoading(false);
     }
-  }, [beginTransition, hasMore, isTransitioning, loading, offset, videos.length]);
+  }, [beginTransition, currentUser?.id, hasMore, isTransitioning, loading, offset, videos.length]);
+
+  const updateVideo = useCallback((videoId: number, patch: Partial<Video>) => {
+    setVideos((current) =>
+      current.map((video) => (video.id === videoId ? { ...video, ...patch } : video)),
+    );
+  }, []);
+
+  async function handleToggleLike(video: Video) {
+    if (!currentUser) {
+      setError("Select a user before liking loops.");
+      return;
+    }
+
+    const previousLiked = video.liked_by_current_user;
+    const previousCount = video.like_count;
+    const nextLiked = !previousLiked;
+    const nextCount = nextLiked ? previousCount + 1 : Math.max(0, previousCount - 1);
+
+    updateVideo(video.id, {
+      liked_by_current_user: nextLiked,
+      like_count: nextCount,
+    });
+
+    try {
+      const response = previousLiked
+        ? await unlikeVideo(video.id, currentUser.id)
+        : await likeVideo(video.id, currentUser.id);
+      updateVideo(video.id, {
+        liked_by_current_user: response.liked,
+        like_count: response.like_count,
+      });
+    } catch (caught) {
+      updateVideo(video.id, {
+        liked_by_current_user: previousLiked,
+        like_count: previousCount,
+      });
+      setError(caught instanceof Error ? caught.message : "Failed to update like");
+    }
+  }
 
   const goNext = useCallback(() => {
     if (isTransitioning || !videos.length) return;
@@ -202,7 +244,9 @@ export function ReelsFeed({ refreshToken }: ReelsFeedProps) {
                 isActive={index === activeIndex}
                 position={index + 1}
                 total={videos.length}
+                currentUser={currentUser}
                 registerVideoRef={registerVideoRef}
+                onToggleLike={handleToggleLike}
               />
             ))}
             {hasCaughtUpSlide && (

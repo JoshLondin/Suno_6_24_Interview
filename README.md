@@ -75,10 +75,14 @@ Stop the app with `docker compose down`. Add `-v` only when you intentionally wa
 | `GET` | `/api/users` | Alphabetical user list |
 | `POST` | `/api/users` | Create a normalized, unique username |
 | `POST` | `/api/videos` | Upload multipart fields `user_id` and `video` |
-| `GET` | `/api/videos/feed?limit=20&offset=0` | Newest-first feed page |
+| `GET` | `/api/videos/feed?limit=20&offset=0&viewer_user_id=1` | Newest-first feed page with social state |
+| `POST` | `/api/videos/{video_id}/like` | Like a loop as `{ "user_id": 1 }` |
+| `DELETE` | `/api/videos/{video_id}/like?user_id=1` | Unlike a loop |
 | `GET` | `/media/videos/{filename}` | Serve stored video |
 
-Usernames must be 3–30 letters, numbers, underscores, or hyphens. They are trimmed and stored lowercase.
+Usernames must be 3–30 letters, numbers, underscores, or hyphens. They are trimmed and preserve casing.
+
+If you are iterating on schema locally with SQLite, delete `backend/app.db` before restarting the backend so SQLAlchemy can recreate tables and columns with the latest schema.
 
 ## Verification
 

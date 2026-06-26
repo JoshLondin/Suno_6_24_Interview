@@ -78,7 +78,7 @@ export function App() {
       </header>
       {usersError && <p className="top-error error-message" role="alert">{usersError}</p>}
       <main className="feed-main">
-        <ReelsFeed refreshToken={feedRefreshToken} />
+        <ReelsFeed currentUser={currentUser} refreshToken={feedRefreshToken} />
       </main>
 
       {postModalOpen && (

@@ -1,4 +1,4 @@
-import type { FeedResponse, User, Video } from "./types";
+import type { FeedResponse, LikeResponse, User, Video } from "./types";
 
 export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
@@ -39,11 +39,42 @@ export async function createUser(username: string): Promise<User> {
   return response.json();
 }
 
-export async function fetchFeed(limit = 20, offset = 0): Promise<FeedResponse> {
+export async function fetchFeed(
+  limit = 20,
+  offset = 0,
+  viewerUserId?: number,
+): Promise<FeedResponse> {
   const url = new URL(`${API_BASE_URL}/api/videos/feed`);
   url.searchParams.set("limit", String(limit));
   url.searchParams.set("offset", String(offset));
+  if (viewerUserId !== undefined) {
+    url.searchParams.set("viewer_user_id", String(viewerUserId));
+  }
   const response = await fetch(url);
+  if (!response.ok) throw new Error(await parseError(response));
+  return response.json();
+}
+
+export async function likeVideo(
+  videoId: number,
+  userId: number,
+): Promise<LikeResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/videos/${videoId}/like`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id: userId }),
+  });
+  if (!response.ok) throw new Error(await parseError(response));
+  return response.json();
+}
+
+export async function unlikeVideo(
+  videoId: number,
+  userId: number,
+): Promise<LikeResponse> {
+  const url = new URL(`${API_BASE_URL}/api/videos/${videoId}/like`);
+  url.searchParams.set("user_id", String(userId));
+  const response = await fetch(url, { method: "DELETE" });
   if (!response.ok) throw new Error(await parseError(response));
   return response.json();
 }

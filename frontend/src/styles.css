@@ -91,6 +91,10 @@ button:disabled { cursor: not-allowed; opacity: 0.55; }
 .reel-overlay time { color: #d4d4d8; font-size: 0.78rem; }
 .reel-count { margin: 0 !important; color: #fda4af !important; font-size: 0.65rem; font-weight: 800; letter-spacing: .12em; }
 .reel-meta { text-align: right; }
+.reel-actions { position: absolute; right: 18px; top: 50%; z-index: 2; transform: translateY(-50%); display: grid; justify-items: center; gap: 6px; color: #f4f4f5; text-shadow: 0 2px 10px #000; }
+.reel-actions button { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid #ffffff2e; border-radius: 50%; background: #18181bd9; color: #f4f4f5; font-size: 1.2rem; backdrop-filter: blur(8px); }
+.reel-actions button.is-liked { border-color: #fb7185; background: #f43f5e; color: #fff; }
+.reel-actions span { margin-bottom: 8px; color: #fafafa; font-size: .72rem; font-weight: 800; }
 .reel-nav-buttons { position: absolute; top: 50%; left: calc(50% + min(410px, calc((100vw - 150px) / 2)) + 14px); transform: translateY(-50%); display: flex; flex-direction: column; gap: 9px; }
 .reel-nav-buttons button { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid #3f3f46; border-radius: 50%; background: #18181b; color: #f4f4f5; box-shadow: 0 12px 35px #0006; }
 .feed-toast { position: absolute; z-index: 4; top: 14px; left: 50%; transform: translateX(-50%); border-radius: 999px; padding: 8px 12px; background: #18181be8; color: #e4e4e7; font-size: .75rem; white-space: nowrap; }
@@ -118,5 +122,6 @@ button:disabled { cursor: not-allowed; opacity: 0.55; }
   .reels-viewport, .reel-card, .caught-up-slide { width: 100%; height: 72vh; min-height: 460px; }
   .reels-viewport, .reel-nav-buttons { grid-column: 1; }
   .reel-nav-buttons { position: static; transform: none; flex-direction: row; justify-content: center; }
+  .reel-actions { right: 12px; }
   .modal-backdrop { padding: 10px; }
 }
