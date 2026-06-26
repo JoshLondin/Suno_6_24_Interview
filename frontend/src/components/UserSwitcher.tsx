@@ -84,7 +84,7 @@ export function UserSwitcher({
             required
           />
           <button type="submit" disabled={submitting}>
-            {submitting ? "Creating…" : "Create"}
+            {submitting ? "Adding…" : "Add Username"}
           </button>
         </div>
       </form>
