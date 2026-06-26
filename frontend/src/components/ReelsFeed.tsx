@@ -26,12 +26,13 @@ export function ReelsFeed({ refreshToken }: ReelsFeedProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [atEnd, setAtEnd] = useState(false);
 
   const videoRefs = useRef(new Map<number, HTMLVideoElement>());
   const touchStartYRef = useRef<number | null>(null);
   const lastWheelAtRef = useRef(0);
   const transitionTimerRef = useRef<number | null>(null);
+  const hasCaughtUpSlide = videos.length > 0 && !hasMore;
+  const slideCount = videos.length + (hasCaughtUpSlide ? 1 : 0);
 
   const beginTransition = useCallback(() => {
     setIsTransitioning(true);
@@ -46,7 +47,6 @@ export function ReelsFeed({ refreshToken }: ReelsFeedProps) {
     let active = true;
     setLoading(true);
     setError(null);
-    setAtEnd(false);
     fetchFeed(PAGE_SIZE, 0)
       .then((response) => {
         if (!active) return;
@@ -75,7 +75,7 @@ export function ReelsFeed({ refreshToken }: ReelsFeedProps) {
       const element = videoRefs.current.get(video.id);
       if (!element) return;
       if (index === activeIndex) {
-        element.muted = true;
+        element.muted = false;
         void element.play().catch(() => undefined);
       } else {
         element.pause();
@@ -90,12 +90,11 @@ export function ReelsFeed({ refreshToken }: ReelsFeedProps) {
   }, []);
 
   const goToIndex = useCallback((nextIndex: number) => {
-    const clamped = Math.max(0, Math.min(nextIndex, videos.length - 1));
-    if (!videos.length || clamped === activeIndex || isTransitioning) return;
-    setAtEnd(false);
+    const clamped = Math.max(0, Math.min(nextIndex, slideCount - 1));
+    if (!slideCount || clamped === activeIndex || isTransitioning) return;
     setActiveIndex(clamped);
     beginTransition();
-  }, [activeIndex, beginTransition, isTransitioning, videos.length]);
+  }, [activeIndex, beginTransition, isTransitioning, slideCount]);
 
   const loadMoreAndAdvance = useCallback(async () => {
     if (loading || !hasMore || isTransitioning) return;
@@ -109,22 +108,23 @@ export function ReelsFeed({ refreshToken }: ReelsFeedProps) {
       if (response.items.length > 0) {
         setActiveIndex((current) => current + 1);
         beginTransition();
-      } else {
-        setAtEnd(true);
+      } else if (!response.has_more) {
+        setActiveIndex(videos.length);
+        beginTransition();
       }
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Failed to load more videos");
     } finally {
       setLoading(false);
     }
-  }, [beginTransition, hasMore, isTransitioning, loading, offset]);
+  }, [beginTransition, hasMore, isTransitioning, loading, offset, videos.length]);
 
   const goNext = useCallback(() => {
     if (isTransitioning || !videos.length) return;
     if (activeIndex < videos.length - 1) goToIndex(activeIndex + 1);
     else if (hasMore) void loadMoreAndAdvance();
-    else setAtEnd(true);
-  }, [activeIndex, goToIndex, hasMore, isTransitioning, loadMoreAndAdvance, videos.length]);
+    else if (activeIndex < slideCount - 1) goToIndex(activeIndex + 1);
+  }, [activeIndex, goToIndex, hasMore, isTransitioning, loadMoreAndAdvance, slideCount, videos.length]);
 
   const goPrev = useCallback(() => {
     if (!isTransitioning) goToIndex(activeIndex - 1);
@@ -185,34 +185,41 @@ export function ReelsFeed({ refreshToken }: ReelsFeedProps) {
   return (
     <section className="feed-section" aria-label="Reels feed">
       <div className="feed-heading">
-        <div><p className="step-label">03 / WATCH</p><h2>Fresh loops</h2></div>
-        <div className="nav-hint"><span>↓ Next</span><span>↑ Previous</span></div>
+        <h2>Latest Loops</h2>
       </div>
-      <div
-        className="reels-viewport"
-        onWheel={handleWheel}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-      >
-        <div className="reels-track" style={{ transform: `translateY(-${activeIndex * 100}%)` }}>
-          {videos.map((video, index) => (
-            <ReelCard
-              key={video.id}
-              video={video}
-              isActive={index === activeIndex}
-              position={index + 1}
-              total={videos.length}
-              registerVideoRef={registerVideoRef}
-            />
-          ))}
+      <div className="reels-stage">
+        <div
+          className="reels-viewport"
+          onWheel={handleWheel}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
+          <div className="reels-track" style={{ transform: `translateY(-${activeIndex * 100}%)` }}>
+            {videos.map((video, index) => (
+              <ReelCard
+                key={video.id}
+                video={video}
+                isActive={index === activeIndex}
+                position={index + 1}
+                total={videos.length}
+                registerVideoRef={registerVideoRef}
+              />
+            ))}
+            {hasCaughtUpSlide && (
+              <div className="caught-up-slide" aria-label="End of feed">
+                <span>◎</span>
+                <h3>You’re all caught up</h3>
+                <p>Check back later for new loops.</p>
+              </div>
+            )}
+          </div>
+          {loading && <div className="feed-toast">Loading more…</div>}
+          {error && <div className="feed-toast error-message">{error}</div>}
         </div>
         <div className="reel-nav-buttons" aria-label="Feed navigation">
           <button type="button" onClick={goPrev} disabled={activeIndex === 0 || isTransitioning} aria-label="Previous reel">↑</button>
-          <button type="button" onClick={goNext} disabled={isTransitioning || loading} aria-label="Next reel">↓</button>
+          <button type="button" onClick={goNext} disabled={(!hasMore && activeIndex >= slideCount - 1) || isTransitioning || loading} aria-label="Next reel">↓</button>
         </div>
-        {loading && <div className="feed-toast">Loading more…</div>}
-        {atEnd && <div className="feed-toast">You’re all caught up.</div>}
-        {error && <div className="feed-toast error-message">{error}</div>}
       </div>
     </section>
   );

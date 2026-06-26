@@ -22,7 +22,6 @@ export function ReelCard({
         ref={(element) => registerVideoRef(video.id, element)}
         src={resolveMediaUrl(video.video_url)}
         playsInline
-        muted
         loop
         controls={isActive}
         preload={isActive ? "auto" : "metadata"}
@@ -31,15 +30,17 @@ export function ReelCard({
       <div className="reel-gradient" />
       <div className="reel-overlay">
         <p className="reel-count">{String(position).padStart(2, "0")} / {String(total).padStart(2, "0")}</p>
-        <h3>@{video.username}</h3>
-        <time dateTime={video.created_at}>
-          {new Date(video.created_at).toLocaleString(undefined, {
-            month: "short",
-            day: "numeric",
-            hour: "numeric",
-            minute: "2-digit",
-          })}
-        </time>
+        <div className="reel-meta">
+          <h3>@{video.username}</h3>
+          <time dateTime={video.created_at}>
+            {new Date(video.created_at).toLocaleString(undefined, {
+              month: "short",
+              day: "numeric",
+              hour: "numeric",
+              minute: "2-digit",
+            })}
+          </time>
+        </div>
       </div>
     </article>
   );

@@ -8,6 +8,7 @@ type UserSwitcherProps = {
   currentUser: User | null;
   onUsersChange: (users: User[]) => void;
   onCurrentUserChange: (user: User) => void;
+  variant?: "panel" | "nav";
 };
 
 export function UserSwitcher({
@@ -15,6 +16,7 @@ export function UserSwitcher({
   currentUser,
   onUsersChange,
   onCurrentUserChange,
+  variant = "panel",
 }: UserSwitcherProps) {
   const [newUsername, setNewUsername] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -44,16 +46,16 @@ export function UserSwitcher({
   }
 
   return (
-    <section className="account-section" aria-labelledby="account-heading">
+    <section className={`account-section ${variant === "nav" ? "account-section-nav" : ""}`} aria-labelledby="account-heading">
       <div className="section-heading">
         <div>
-          <p className="step-label">01 / ACCOUNT</p>
+          {variant === "panel" && <p className="step-label">01 / ACCOUNT</p>}
           <h2 id="account-heading">Who’s posting?</h2>
         </div>
         {currentUser && <span className="avatar">{currentUser.username[0]}</span>}
       </div>
 
-      <label htmlFor="user-select">Current account</label>
+      <label htmlFor="user-select">Account</label>
       <select
         id="user-select"
         value={currentUser?.id ?? ""}
@@ -65,7 +67,7 @@ export function UserSwitcher({
         ))}
       </select>
 
-      <div className="divider"><span>or create one</span></div>
+      {variant === "panel" && <div className="divider"><span>or create one</span></div>}
 
       <form onSubmit={handleCreateUser} className="create-user-form">
         <label htmlFor="new-username">New username</label>

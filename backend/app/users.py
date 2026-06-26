@@ -15,7 +15,7 @@ USERNAME_RE = re.compile(r"^[a-zA-Z0-9_-]{3,30}$")
 
 
 def normalize_username(username: str) -> str:
-    normalized = username.strip().lower()
+    normalized = username.strip()
     if not USERNAME_RE.fullmatch(normalized):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -49,4 +49,3 @@ def create_user(payload: UserCreate, db: Session = Depends(get_db)) -> User:
 
     db.refresh(user)
     return user
-
