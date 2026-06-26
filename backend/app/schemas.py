@@ -57,3 +57,24 @@ class LikeResponse(BaseModel):
     video_id: int
     liked: bool
     like_count: int
+
+
+class CommentCreate(BaseModel):
+    user_id: int
+    body: str = Field(min_length=1, max_length=500)
+
+
+class CommentOut(BaseModel):
+    id: int
+    video_id: int
+    user_id: int
+    username: str
+    user_profile_photo_url: Optional[str]
+    body: str
+    created_at: datetime
+
+
+class CommentListOut(BaseModel):
+    items: list[CommentOut]
+    next_offset: int
+    has_more: bool

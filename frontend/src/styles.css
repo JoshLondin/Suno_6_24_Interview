@@ -136,6 +136,24 @@ button:disabled { cursor: not-allowed; opacity: 0.55; }
 .profile-reel-tile video { display: block; width: 100%; aspect-ratio: 9 / 16; object-fit: cover; background: #050506; }
 .profile-reel-meta { display: flex; align-items: center; justify-content: space-between; padding: 9px 10px; color: #d4d4d8; font-size: .78rem; font-weight: 750; }
 .profile-reels-section .wide-button { margin-top: 12px; }
+.comments-drawer-backdrop { position: fixed; z-index: 60; inset: 0; display: flex; justify-content: flex-end; background: #000a; backdrop-filter: blur(8px); }
+.comments-drawer { width: min(470px, 100vw); height: 100vh; display: flex; flex-direction: column; border-left: 1px solid #33333a; background: #141416; padding: 20px; box-shadow: -30px 0 90px #000b; }
+.comments-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 16px; border-bottom: 1px solid #27272a; }
+.comments-header h2 { margin: 0; font-size: clamp(1.5rem, 4vw, 2.25rem); letter-spacing: -.06em; }
+.comments-list { flex: 1; overflow-y: auto; padding: 10px 0 16px; }
+.comments-muted { margin: 18px 0; color: #a1a1aa; text-align: center; }
+.comment-row { display: grid; grid-template-columns: 42px 1fr; gap: 12px; padding: 13px 0; border-bottom: 1px solid #27272a; }
+.comment-row strong { color: #fafafa; }
+.comment-row p { margin: 4px 0 6px; color: #d4d4d8; line-height: 1.45; overflow-wrap: anywhere; }
+.comment-row time { color: #71717a; font-size: .72rem; }
+.comment-avatar { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; background: #27272a; }
+.comment-avatar-placeholder { display: grid; place-items: center; color: white; font-weight: 850; background: #f43f5e; }
+.comment-composer { display: grid; gap: 9px; padding-top: 12px; border-top: 1px solid #27272a; }
+.comment-composer textarea { width: 100%; min-height: 84px; border: 0; border-radius: 12px; outline: 1px solid #343439; background: #222225; color: #fafafa; padding: 12px; resize: vertical; }
+.comment-composer textarea:focus { outline: 2px solid #fb7185; }
+.comment-composer-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.comment-composer-actions span { color: #71717a; font-size: .75rem; }
+.comment-composer-actions button { min-height: 42px; }
 
 @media (max-width: 800px) {
   .app-shell { padding: 12px; }
@@ -152,4 +170,5 @@ button:disabled { cursor: not-allowed; opacity: 0.55; }
   .modal-backdrop { padding: 10px; }
   .profile-panel { width: 100vw; border-left: 0; }
   .profile-reels-grid { grid-template-columns: 1fr; }
+  .comments-drawer { width: 100vw; border-left: 0; }
 }

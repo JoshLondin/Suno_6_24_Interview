@@ -58,3 +58,21 @@ class VideoLike(Base):
 
     video: Mapped[Video] = relationship()
     user: Mapped[User] = relationship()
+
+
+class VideoComment(Base):
+    __tablename__ = "video_comments"
+    __table_args__ = (
+        Index("idx_video_comments_video_created", "video_id", "created_at", "id"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    video_id: Mapped[int] = mapped_column(ForeignKey("videos.id"), index=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    body: Mapped[str] = mapped_column(String(500))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+    video: Mapped[Video] = relationship()
+    user: Mapped[User] = relationship()

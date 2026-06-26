@@ -9,6 +9,7 @@ import {
 
 import { fetchFeed, likeVideo, unlikeVideo } from "../api";
 import type { User, Video } from "../types";
+import { CommentsDrawer } from "./CommentsDrawer";
 import { ReelCard } from "./ReelCard";
 
 type ReelsFeedProps = {
@@ -29,6 +30,7 @@ export function ReelsFeed({ currentUser, refreshToken }: ReelsFeedProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [commentsVideo, setCommentsVideo] = useState<Video | null>(null);
 
   const videoRefs = useRef(new Map<number, HTMLVideoElement>());
   const touchStartYRef = useRef<number | null>(null);
@@ -161,6 +163,21 @@ export function ReelsFeed({ currentUser, refreshToken }: ReelsFeedProps) {
     }
   }
 
+  function incrementCommentCount(videoId: number) {
+    setVideos((current) =>
+      current.map((video) =>
+        video.id === videoId
+          ? { ...video, comment_count: video.comment_count + 1 }
+          : video,
+      ),
+    );
+    setCommentsVideo((current) =>
+      current?.id === videoId
+        ? { ...current, comment_count: current.comment_count + 1 }
+        : current,
+    );
+  }
+
   const goNext = useCallback(() => {
     if (isTransitioning || !videos.length) return;
     if (activeIndex < videos.length - 1) goToIndex(activeIndex + 1);
@@ -247,6 +264,7 @@ export function ReelsFeed({ currentUser, refreshToken }: ReelsFeedProps) {
                 currentUser={currentUser}
                 registerVideoRef={registerVideoRef}
                 onToggleLike={handleToggleLike}
+                onOpenComments={setCommentsVideo}
               />
             ))}
             {hasCaughtUpSlide && (
@@ -265,6 +283,14 @@ export function ReelsFeed({ currentUser, refreshToken }: ReelsFeedProps) {
           <button type="button" onClick={goNext} disabled={(!hasMore && activeIndex >= slideCount - 1) || isTransitioning || loading} aria-label="Next reel">↓</button>
         </div>
       </div>
+      {commentsVideo && (
+        <CommentsDrawer
+          video={commentsVideo}
+          currentUser={currentUser}
+          onClose={() => setCommentsVideo(null)}
+          onCommentCreated={incrementCommentCount}
+        />
+      )}
     </section>
   );
 }

@@ -10,8 +10,16 @@ from sqlalchemy.orm import Session, joinedload
 
 from .config import VIDEO_DIR
 from .db import get_db
-from .models import User, Video, VideoLike
-from .schemas import FeedOut, LikeRequest, LikeResponse, VideoOut
+from .models import User, Video, VideoComment, VideoLike
+from .schemas import (
+    CommentCreate,
+    CommentListOut,
+    CommentOut,
+    FeedOut,
+    LikeRequest,
+    LikeResponse,
+    VideoOut,
+)
 from .storage import generate_video_filename, save_upload_file_with_limit
 
 router = APIRouter(prefix="/api/videos", tags=["videos"])
@@ -59,7 +67,19 @@ def is_liked_by_user(
 
 
 def get_comment_count(db: Session, video_id: int) -> int:
-    return 0
+    return db.query(VideoComment).filter(VideoComment.video_id == video_id).count()
+
+
+def comment_to_out(comment: VideoComment) -> CommentOut:
+    return CommentOut(
+        id=comment.id,
+        video_id=comment.video_id,
+        user_id=comment.user_id,
+        username=comment.user.username,
+        user_profile_photo_url=profile_photo_url_for_user(comment.user),
+        body=comment.body,
+        created_at=comment.created_at,
+    )
 
 
 def video_to_out(
@@ -191,3 +211,56 @@ def unlike_video(
         db.commit()
 
     return LikeResponse(video_id=video_id, liked=False, like_count=get_like_count(db, video_id))
+
+
+@router.get("/{video_id}/comments", response_model=CommentListOut)
+def list_comments(
+    video_id: int,
+    limit: int = Query(default=50, ge=1, le=100),
+    offset: int = Query(default=0, ge=0),
+    db: Session = Depends(get_db),
+) -> CommentListOut:
+    get_video_or_404(db, video_id)
+    statement = (
+        select(VideoComment)
+        .options(joinedload(VideoComment.user))
+        .where(VideoComment.video_id == video_id)
+        .order_by(VideoComment.created_at.asc(), VideoComment.id.asc())
+        .offset(offset)
+        .limit(limit + 1)
+    )
+    results = list(db.scalars(statement).all())
+    has_more = len(results) > limit
+    page = results[:limit]
+    return CommentListOut(
+        items=[comment_to_out(comment) for comment in page],
+        next_offset=offset + len(page),
+        has_more=has_more,
+    )
+
+
+@router.post("/{video_id}/comments", response_model=CommentOut, status_code=201)
+def create_comment(
+    video_id: int,
+    payload: CommentCreate,
+    db: Session = Depends(get_db),
+) -> CommentOut:
+    get_video_or_404(db, video_id)
+    get_user_or_404(db, payload.user_id)
+    body = payload.body.strip()
+    if not body:
+        raise HTTPException(status_code=400, detail="Comment cannot be empty")
+
+    comment = VideoComment(video_id=video_id, user_id=payload.user_id, body=body)
+    db.add(comment)
+    db.commit()
+    db.refresh(comment)
+
+    loaded = db.scalar(
+        select(VideoComment)
+        .options(joinedload(VideoComment.user))
+        .where(VideoComment.id == comment.id)
+    )
+    if not loaded:
+        raise HTTPException(status_code=500, detail="Could not load comment")
+    return comment_to_out(loaded)

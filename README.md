@@ -82,6 +82,8 @@ Stop the app with `docker compose down`. Add `-v` only when you intentionally wa
 | `GET` | `/api/videos/feed?limit=20&offset=0&viewer_user_id=1` | Newest-first feed page with social state |
 | `POST` | `/api/videos/{video_id}/like` | Like a loop as `{ "user_id": 1 }` |
 | `DELETE` | `/api/videos/{video_id}/like?user_id=1` | Unlike a loop |
+| `GET` | `/api/videos/{video_id}/comments?limit=50&offset=0` | List loop comments oldest-first |
+| `POST` | `/api/videos/{video_id}/comments` | Add a comment as `{ "user_id": 1, "body": "..." }` |
 | `GET` | `/media/videos/{filename}` | Serve stored video |
 | `GET` | `/media/profile_photos/{filename}` | Serve stored profile photo |
 

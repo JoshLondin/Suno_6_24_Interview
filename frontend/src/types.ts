@@ -36,3 +36,19 @@ export type LikeResponse = {
   liked: boolean;
   like_count: number;
 };
+
+export type Comment = {
+  id: number;
+  video_id: number;
+  user_id: number;
+  username: string;
+  user_profile_photo_url: string | null;
+  body: string;
+  created_at: string;
+};
+
+export type CommentListResponse = {
+  items: Comment[];
+  next_offset: number;
+  has_more: boolean;
+};

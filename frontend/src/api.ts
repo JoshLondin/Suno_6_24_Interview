@@ -1,4 +1,12 @@
-import type { FeedResponse, LikeResponse, User, UserProfile, Video } from "./types";
+import type {
+  Comment,
+  CommentListResponse,
+  FeedResponse,
+  LikeResponse,
+  User,
+  UserProfile,
+  Video,
+} from "./types";
 
 export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
@@ -140,6 +148,33 @@ export async function uploadVideo(
   const response = await fetch(`${API_BASE_URL}/api/videos`, {
     method: "POST",
     body: formData,
+  });
+  if (!response.ok) throw new Error(await parseError(response));
+  return response.json();
+}
+
+export async function fetchComments(
+  videoId: number,
+  limit = 50,
+  offset = 0,
+): Promise<CommentListResponse> {
+  const url = new URL(`${API_BASE_URL}/api/videos/${videoId}/comments`);
+  url.searchParams.set("limit", String(limit));
+  url.searchParams.set("offset", String(offset));
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(await parseError(response));
+  return response.json();
+}
+
+export async function createComment(
+  videoId: number,
+  userId: number,
+  body: string,
+): Promise<Comment> {
+  const response = await fetch(`${API_BASE_URL}/api/videos/${videoId}/comments`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id: userId, body }),
   });
   if (!response.ok) throw new Error(await parseError(response));
   return response.json();
