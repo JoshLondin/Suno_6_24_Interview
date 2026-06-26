@@ -1,4 +1,4 @@
-import type { FeedResponse, LikeResponse, User, Video } from "./types";
+import type { FeedResponse, LikeResponse, User, UserProfile, Video } from "./types";
 
 export const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
@@ -39,12 +39,62 @@ export async function createUser(username: string): Promise<User> {
   return response.json();
 }
 
+export async function fetchUserProfile(userId: number): Promise<UserProfile> {
+  const response = await fetch(`${API_BASE_URL}/api/users/${userId}`);
+  if (!response.ok) throw new Error(await parseError(response));
+  return response.json();
+}
+
+export async function updateUserProfile(
+  userId: number,
+  description: string | null,
+): Promise<UserProfile> {
+  const response = await fetch(`${API_BASE_URL}/api/users/${userId}/profile`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ description }),
+  });
+  if (!response.ok) throw new Error(await parseError(response));
+  return response.json();
+}
+
+export async function uploadProfilePhoto(
+  userId: number,
+  file: File,
+): Promise<UserProfile> {
+  const formData = new FormData();
+  formData.append("photo", file, file.name);
+  const response = await fetch(`${API_BASE_URL}/api/users/${userId}/profile-photo`, {
+    method: "POST",
+    body: formData,
+  });
+  if (!response.ok) throw new Error(await parseError(response));
+  return response.json();
+}
+
 export async function fetchFeed(
   limit = 20,
   offset = 0,
   viewerUserId?: number,
 ): Promise<FeedResponse> {
   const url = new URL(`${API_BASE_URL}/api/videos/feed`);
+  url.searchParams.set("limit", String(limit));
+  url.searchParams.set("offset", String(offset));
+  if (viewerUserId !== undefined) {
+    url.searchParams.set("viewer_user_id", String(viewerUserId));
+  }
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(await parseError(response));
+  return response.json();
+}
+
+export async function fetchUserVideos(
+  userId: number,
+  limit = 20,
+  offset = 0,
+  viewerUserId?: number,
+): Promise<FeedResponse> {
+  const url = new URL(`${API_BASE_URL}/api/users/${userId}/videos`);
   url.searchParams.set("limit", String(limit));
   url.searchParams.set("offset", String(offset));
   if (viewerUserId !== undefined) {

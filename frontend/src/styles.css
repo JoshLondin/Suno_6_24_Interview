@@ -20,6 +20,7 @@ button, select, input { border: 0; }
 .api-status { border: 1px solid #3f3f46; border-radius: 999px; color: #a1a1aa; padding: 8px 12px; font-size: 0.8rem; }
 .api-status.online { border-color: #22c55e55; color: #4ade80; }
 .post-loop-button { min-height: 44px; white-space: nowrap; box-shadow: 0 12px 30px #f43f5e30; }
+.secondary-nav-button { min-height: 44px; border: 1px solid #343439; background: #222225; color: #f4f4f5; white-space: nowrap; }
 .top-error { width: min(1420px, 100%); margin: -6px auto 12px !important; }
 .feed-main { width: min(1420px, 100%); margin: 0 auto; }
 .main-grid { display: grid; grid-template-columns: minmax(280px, 400px) minmax(360px, 1fr); gap: 24px; max-width: 1320px; margin: 0 auto; }
@@ -110,6 +111,31 @@ button:disabled { cursor: not-allowed; opacity: 0.55; }
 .post-modal .create-video { border-top: 1px solid #2b2b2f; margin-top: 18px; padding-top: 18px; }
 .post-modal .create-video .step-label { display: none; }
 .post-modal .create-video h2 { margin-bottom: 10px; }
+.profile-panel-backdrop { position: fixed; z-index: 50; inset: 0; display: flex; justify-content: flex-end; background: #000b; backdrop-filter: blur(8px); }
+.profile-panel { width: min(560px, 100vw); height: 100vh; overflow-y: auto; border-left: 1px solid #33333a; background: #141416; padding: 22px; box-shadow: -30px 0 90px #000b; }
+.profile-panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
+.profile-panel-heading h2 { margin: 0; font-size: clamp(1.6rem, 4vw, 2.4rem); letter-spacing: -.06em; }
+.profile-header { display: flex; align-items: center; gap: 16px; padding: 16px; border: 1px solid #27272a; border-radius: 18px; background: #0f0f12; }
+.profile-header h3 { margin: 0 0 4px; font-size: 1.45rem; }
+.profile-header p, .profile-loading, .profile-empty-state { margin: 0; color: #a1a1aa; }
+.profile-avatar-large { width: 78px; height: 78px; border-radius: 50%; object-fit: cover; background: #27272a; }
+.profile-avatar-placeholder { display: grid; place-items: center; color: white; font-size: 1.7rem; font-weight: 850; background: #f43f5e; }
+.profile-upload-control, .profile-description-control { display: grid; gap: 8px; margin-top: 18px; color: #d4d4d8; font-size: .8rem; font-weight: 750; }
+.profile-upload-control input, .profile-description-control textarea { width: 100%; border-radius: 12px; outline: 1px solid #343439; background: #222225; color: #fafafa; }
+.profile-upload-control input { padding: 12px; }
+.profile-description-control textarea { min-height: 104px; padding: 12px; resize: vertical; border: 0; }
+.profile-upload-control input:focus, .profile-description-control textarea:focus { outline: 2px solid #fb7185; }
+.profile-save-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 10px; }
+.profile-save-row span { color: #71717a; font-size: .75rem; }
+.profile-save-row button { min-height: 42px; }
+.profile-reels-heading { display: flex; align-items: center; justify-content: space-between; margin-top: 26px; }
+.profile-reels-heading h3 { margin: 0; font-size: 1.3rem; }
+.profile-reels-section { margin-top: 12px; }
+.profile-reels-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.profile-reel-tile { overflow: hidden; border: 1px solid #27272a; border-radius: 16px; background: #0f0f12; }
+.profile-reel-tile video { display: block; width: 100%; aspect-ratio: 9 / 16; object-fit: cover; background: #050506; }
+.profile-reel-meta { display: flex; align-items: center; justify-content: space-between; padding: 9px 10px; color: #d4d4d8; font-size: .78rem; font-weight: 750; }
+.profile-reels-section .wide-button { margin-top: 12px; }
 
 @media (max-width: 800px) {
   .app-shell { padding: 12px; }
@@ -124,4 +150,6 @@ button:disabled { cursor: not-allowed; opacity: 0.55; }
   .reel-nav-buttons { position: static; transform: none; flex-direction: row; justify-content: center; }
   .reel-actions { right: 12px; }
   .modal-backdrop { padding: 10px; }
+  .profile-panel { width: 100vw; border-left: 0; }
+  .profile-reels-grid { grid-template-columns: 1fr; }
 }

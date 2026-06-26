@@ -8,19 +8,19 @@ from fastapi.staticfiles import StaticFiles
 from .config import CORS_ORIGINS, MEDIA_DIR
 from .db import Base, engine
 from . import models  # noqa: F401 - register SQLAlchemy models
-from .storage import ensure_video_dir
+from .storage import ensure_media_dirs
 from .users import router as users_router
 from .videos import router as videos_router
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
-    ensure_video_dir()
+    ensure_media_dirs()
     Base.metadata.create_all(bind=engine)
     yield
 
 
-ensure_video_dir()
+ensure_media_dirs()
 
 app = FastAPI(title="Short-Form Video App", lifespan=lifespan)
 

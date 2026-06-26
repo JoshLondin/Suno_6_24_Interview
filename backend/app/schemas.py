@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class UserCreate(BaseModel):
@@ -15,7 +15,17 @@ class UserOut(BaseModel):
 
     id: int
     username: str
+    profile_photo_url: Optional[str]
+    description: Optional[str]
     created_at: datetime
+
+
+class UserProfileOut(UserOut):
+    video_count: int
+
+
+class UserProfileUpdate(BaseModel):
+    description: Optional[str] = Field(default=None, max_length=280)
 
 
 class VideoOut(BaseModel):

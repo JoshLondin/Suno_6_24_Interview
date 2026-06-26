@@ -1,7 +1,13 @@
 export type User = {
   id: number;
   username: string;
+  profile_photo_url: string | null;
+  description: string | null;
   created_at: string;
+};
+
+export type UserProfile = User & {
+  video_count: number;
 };
 
 export type Video = {

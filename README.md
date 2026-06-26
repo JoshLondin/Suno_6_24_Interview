@@ -74,11 +74,16 @@ Stop the app with `docker compose down`. Add `-v` only when you intentionally wa
 | `GET` | `/api/health` | Service health |
 | `GET` | `/api/users` | Alphabetical user list |
 | `POST` | `/api/users` | Create a normalized, unique username |
+| `GET` | `/api/users/{user_id}` | Get account profile and posted loop count |
+| `PATCH` | `/api/users/{user_id}/profile` | Update profile description |
+| `POST` | `/api/users/{user_id}/profile-photo` | Upload JPEG, PNG, or WebP profile photo up to 5 MB |
+| `GET` | `/api/users/{user_id}/videos?limit=20&offset=0&viewer_user_id=1` | Newest-first loops for one account |
 | `POST` | `/api/videos` | Upload multipart fields `user_id` and `video` |
 | `GET` | `/api/videos/feed?limit=20&offset=0&viewer_user_id=1` | Newest-first feed page with social state |
 | `POST` | `/api/videos/{video_id}/like` | Like a loop as `{ "user_id": 1 }` |
 | `DELETE` | `/api/videos/{video_id}/like?user_id=1` | Unlike a loop |
 | `GET` | `/media/videos/{filename}` | Serve stored video |
+| `GET` | `/media/profile_photos/{filename}` | Serve stored profile photo |
 
 Usernames must be 3–30 letters, numbers, underscores, or hyphens. They are trimmed and preserve casing.
 

@@ -5,15 +5,23 @@ APP_DIR = Path(__file__).resolve().parent
 BACKEND_DIR = APP_DIR.parent
 MEDIA_DIR = BACKEND_DIR / "media"
 VIDEO_DIR = MEDIA_DIR / "videos"
+PROFILE_PHOTO_DIR = MEDIA_DIR / "profile_photos"
 
 DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{BACKEND_DIR / 'app.db'}")
 
 MAX_VIDEO_BYTES = 50 * 1024 * 1024
+MAX_PROFILE_PHOTO_BYTES = 5 * 1024 * 1024
 
 ALLOWED_VIDEO_TYPES = {
     "video/webm": ".webm",
     "video/mp4": ".mp4",
     "video/quicktime": ".mov",
+}
+
+ALLOWED_PROFILE_PHOTO_TYPES = {
+    "image/jpeg": ".jpg",
+    "image/png": ".png",
+    "image/webp": ".webp",
 }
 
 CORS_ORIGINS = [

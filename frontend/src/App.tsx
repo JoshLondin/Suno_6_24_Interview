@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { fetchHealth, fetchUsers } from "./api";
 import { CreateVideo } from "./components/CreateVideo";
+import { ProfilePanel } from "./components/ProfilePanel";
 import { ReelsFeed } from "./components/ReelsFeed";
 import { UserSwitcher } from "./components/UserSwitcher";
 import type { User } from "./types";
@@ -15,6 +16,7 @@ export function App() {
   const [usersError, setUsersError] = useState<string | null>(null);
   const [feedRefreshToken, setFeedRefreshToken] = useState(0);
   const [postModalOpen, setPostModalOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
 
   useEffect(() => {
     fetchHealth().then(setApiOnline).catch(() => setApiOnline(false));
@@ -49,6 +51,13 @@ export function App() {
     setPostModalOpen(false);
   }
 
+  function handleUserUpdated(updatedUser: User) {
+    setCurrentUser(updatedUser);
+    setUsers((current) =>
+      current.map((user) => (user.id === updatedUser.id ? updatedUser : user)),
+    );
+  }
+
   return (
     <div className="app-shell">
       <header className="top-nav">
@@ -70,6 +79,14 @@ export function App() {
             onClick={() => setPostModalOpen(true)}
           >
             Post a Loop
+          </button>
+          <button
+            className="secondary-nav-button"
+            type="button"
+            onClick={() => setProfileOpen(true)}
+            disabled={!currentUser}
+          >
+            View Profile
           </button>
           <span className={`api-status ${apiOnline ? "online" : ""}`}>
             {apiOnline === null ? "Connecting…" : apiOnline ? "API online" : "API offline"}
@@ -115,6 +132,15 @@ export function App() {
             />
           </section>
         </div>
+      )}
+
+      {profileOpen && currentUser && (
+        <ProfilePanel
+          userId={currentUser.id}
+          currentUser={currentUser}
+          onClose={() => setProfileOpen(false)}
+          onUserUpdated={handleUserUpdated}
+        />
       )}
     </div>
   );
